@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        TRIVY_SEVERITY = 'CRITICAL,HIGH'
+    }
+
+    stages {
+        stage('Secret Scanning (Gitleaks)') {
+            steps {
+                sh '''
+                    docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path" --verbose --redact
+                '''
+            }
+        }
+
+        stage('SAST Code Analysis (Semgrep)') {
+            steps {
+                sh '''
+                    docker run --rm -v $(pwd):/src returntocorp/semgrep:latest semgrep scan --config auto --error --exclude "test/"
+                '''
+            }
+        }
+
+        stage('SCA Dependencies (Trivy)') {
+            steps {
+                sh '''
+                    docker run --rm -v $(pwd):/workspace aquasec/trivy:latest fs --exit-code 1 --severity ${TRIVY_SEVERITY} --ignore-unfixed /workspace
+                '''
+            }
+        }
+
+        stage('DAST Dynamic Scan (OWASP ZAP)') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh '''
+                    docker run --rm -t zaproxy/zap-stable:latest zap-baseline.py -t http://localhost:3000 -r zap-report.html -I || true
+                '''
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo "Security Pipeline falhou! Verifique as vulnerabilidades apontadas."
+        }
+        success {
+            echo "Security Pipeline aprovado com sucesso!"
+        }
+    }
+}

@@ -1,0 +1,61 @@
+stages:
+  - test
+  - security-sast
+  - security-dast
+
+# ==========================================
+# 1. SECRET SCANNING (Gitleaks)
+# ==========================================
+gitleaks_secret_scan:
+  stage: security-sast
+  image:
+    name: zricethezav/gitleaks:latest
+    entrypoint: [""]
+  script:
+    - gitleaks detect --verbose --redact
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ==========================================
+# 2. SAST CODE ANALYSIS (Semgrep)
+# ==========================================
+semgrep_sast_scan:
+  stage: security-sast
+  image: returntocorp/semgrep:latest
+  script:
+    - semgrep scan --config auto --error --exclude "test/"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ==========================================
+# 3. SCA DEPENDENCY SCAN (Trivy)
+# ==========================================
+trivy_dependency_scan:
+  stage: security-sast
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy fs --exit-code 1 --severity CRITICAL,HIGH --ignore-unfixed .
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# ==========================================
+# 4. DAST SCAN (OWASP ZAP)
+# ==========================================
+owasp_zap_dast_scan:
+  stage: security-dast
+  image: zaproxy/zap-stable:latest
+  variables:
+    TARGET_URL: "http://staging-app:3000"
+  script:
+    - zap-baseline.py -t $TARGET_URL -r zap-report.html -I
+  artifacts:
+    when: always
+    paths:
+      - zap-report.html
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
