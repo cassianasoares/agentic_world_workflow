@@ -1,0 +1,33 @@
+{
+  "name": "agentic-world",
+  "version": "1.0.0",
+  "description": "Esteira autônoma de engenharia de software Secure by Design com 9 skills de IA integradas para qualquer agente (Gemini, Claude, Cursor, etc.)",
+  "main": "bin/cli.js",
+  "bin": {
+    "agentic-world": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    ".agents",
+    "AGENTS.md",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/cli.js"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "skills",
+    "agent-skills",
+    "claude",
+    "gemini",
+    "antigravity",
+    "secure-by-design",
+    "tdd",
+    "clean-architecture",
+    "devsecops"
+  ],
+  "author": "",
+  "license": "MIT"
+}
