@@ -10,7 +10,8 @@
     "bin",
     ".agents",
     "AGENTS.md",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "start": "node bin/cli.js"
@@ -28,6 +29,6 @@
     "clean-architecture",
     "devsecops"
   ],
-  "author": "",
+  "author": "Cassiana Soares",
   "license": "MIT"
 }

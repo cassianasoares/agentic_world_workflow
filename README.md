@@ -189,3 +189,9 @@ A ausência de MCP no **Agentic World** é uma **decisão deliberada de engenhar
    Tudo o que um MCP faria — validar conexões de banco de dados, rodar migrations, auditar vulnerabilidades via `npm audit` ou `trivy`, e testar requisições HTTP — é executado em **milissegundos diretamente pelo terminal local**, de forma transparente, determinística e sem intermediários.
 4. **Portabilidade Universal Real:**  
    Ao depender exclusivamente de **Agent Skills puras** e do terminal, a esteira funciona de forma 100% autocontida e imediata em qualquer agente (Claude Code, Gemini/Antigravity, Cursor, pipelines de CI/CD ou terminais remotos), sem exigir que o usuário instale ou configure daemons externos.
+
+---
+
+## 📄 Licença
+
+Este projeto está licenciado sob a [Licença MIT](LICENSE) — permitindo que qualquer pessoa use, copie, modifique, distribua e sublicencie as skills livremente para projetos pessoais ou comerciais.
